@@ -118,5 +118,6 @@ class InputEncoder():
 dims = {
     "proteinBERT" : 1562,
     "esm2" : 2560,
-    "protT5" : 1024
+    "protT5" : 1024,
+    "fake" : 16
 }
