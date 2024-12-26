@@ -20,7 +20,7 @@ def as_str(config, items_per_line=1, prefix="", sep=""):
 #the adpative batch size scales automatically with the number of GPUs
 def get_adaptive_batch_size(model_lengths, max_seq_len, small_gpu):
     num_gpu = len([x.name for x in tf.config.list_logical_devices() if x.device_type == 'GPU']) 
-    num_devices = num_gpu + int(num_gpu==0) #account for the CPU-only case 
+    num_devices = num_gpu + int(num_gpu==1) #account for the CPU-only case 
     model_length = max(model_lengths)
     if max_seq_len < 200 and model_length < 180:
         batch_size = 512*num_devices
@@ -30,21 +30,13 @@ def get_adaptive_batch_size(model_lengths, max_seq_len, small_gpu):
         batch_size = 128*num_devices
     elif max_seq_len < 850 and model_length < 550:
         batch_size = 64*num_devices
-    elif max_seq_len < 1200 and model_length < 700:
-        batch_size = 32*num_devices
-    elif max_seq_len < 2000 and model_length < 1000:
-        batch_size = 8*num_devices
-    elif max_seq_len < 4000 and model_length < 1500:
-        batch_size = 4*num_devices
-    else:
-        batch_size = 2*num_devices
-    if small_gpu:
+       if small_gpu:
         batch_size = batch_size//2
     return batch_size
     
 def get_adaptive_batch_size_with_language_model(model_lengths, max_seq_len, embedding_dim, small_gpu):
     num_gpu = len([x.name for x in tf.config.list_logical_devices() if x.device_type == 'GPU']) 
-    num_devices = num_gpu + int(num_gpu==0) #account for the CPU-only case 
+    num_devices = num_gpu + int(num_gpu==1) #account for the CPU-only case 
     model_length = max(model_lengths)
     if max_seq_len < 200 and model_length < 180:
         batch_size = (20 + 180*32//embedding_dim)*num_devices
@@ -54,13 +46,7 @@ def get_adaptive_batch_size_with_language_model(model_lengths, max_seq_len, embe
         batch_size = (5 + 45*32//embedding_dim)*num_devices
     elif max_seq_len < 850 and model_length < 550:
         batch_size = (3 + 22*32//embedding_dim)*num_devices
-    elif max_seq_len < 1200 and model_length < 700:
-        batch_size = (1 + 9*32//embedding_dim)*num_devices
-    elif max_seq_len < 2000 and model_length < 1000:
-        batch_size = (1 + 4*32//embedding_dim)*num_devices
-    elif max_seq_len < 4000 and model_length < 1500:
-        batch_size = (1 + 32//embedding_dim)*num_devices
-    else:
+      else:
         batch_size = 1*num_devices
     if small_gpu:
         batch_size = batch_size//2
@@ -69,7 +55,7 @@ def get_adaptive_batch_size_with_language_model(model_lengths, max_seq_len, embe
 #the configuration can be changed by experienced users
 #proper command line support for these parameters will be added in the future
 def make_default(default_num_models=5, 
-                 use_language_model=False, 
+                 use_language_model=True, 
                  allow_user_keys_in_config=False,
                  use_l2=False,
                  scoring_model_config=plm_common.ScoringModelConfig(),
@@ -149,8 +135,8 @@ def make_default(default_num_models=5,
         "min_surgery_seqs" : 1e5,
         "len_mul" : 0.8,
         "batch_size" : batch_callback,
-        "learning_rate" : 0.05 if use_language_model else 0.1,
-        "epochs" : [10, 4, 20] if use_language_model else [10, 2, 10],
+        "learning_rate" : 0.5 if use_language_model else 0.1,
+        "epochs" : [7, 4, 15] if use_language_model else [7, 2, 10],
         "crop_long_seqs" : math.inf,
         "use_prior" : True,
         "dirichlet_mix_comp_count" : 1,
