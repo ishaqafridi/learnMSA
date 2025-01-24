@@ -9,7 +9,7 @@ PRIOR_DEFAULT_COMPONENTS = 32
 
 class ScoringModelConfig():
     def __init__(self, 
-                 lm_name="protT5",
+                 lm_name="ProteinBERT",
                  dim=16,
                  activation="sigmoid",
                  use_aa=False,
@@ -108,6 +108,4 @@ class InputEncoder():
 # for convenience
 dims = {
     "proteinBERT" : 1562,
-    "esm2" : 2560,
-    "protT5" : 1024
-}
+    }
