@@ -48,16 +48,7 @@ def get_language_model(name, max_len=512, trainable=False):
     if name == "proteinBERT":
         import learnMSA.protein_language_models.ProteinBERT as ProteinBERT
         language_model, encoder = ProteinBERT.get_proteinBERT_model_and_encoder(max_len = max_len+2, trainable=trainable)
-    elif name == "esm2":
-        import learnMSA.protein_language_models.ESM2 as ESM2
-        language_model, encoder = ESM2.ESM2LanguageModel(trainable=trainable), ESM2.ESM2InputEncoder()
-    elif name == "esm2s":
-        import learnMSA.protein_language_models.ESM2 as ESM2
-        language_model, encoder = ESM2.ESM2LanguageModel(trainable=trainable, small=True), ESM2.ESM2InputEncoder(small=True)
-    elif name == "protT5":
-        import learnMSA.protein_language_models.ProtT5 as ProtT5
-        language_model, encoder = ProtT5.ProtT5LanguageModel(trainable=trainable), ProtT5.ProtT5InputEncoder()
-    else:
+     else:
         raise ValueError(f"Language model {name} not supported.")
     return language_model, encoder
 
